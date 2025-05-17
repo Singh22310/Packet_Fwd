@@ -1,0 +1,39 @@
+{
+  "incoming_dir": "/home/root/incoming",
+  "outgoing_dir": "/home/root/outgoing",
+  "log_dir": "/home/root/logs",
+  "raspberry_pis": [
+    {
+      "name": "zc1",
+      "ip": "192.168.1.101",
+      "user": "raspberry",
+      "password": "raspberry",
+      "target_dir": "/home/raspberry/received_files"
+    },
+    {
+      "name": "zc2",
+      "ip": "192.168.1.102",
+      "user": "raspberry",
+      "password": "raspberry",
+      "target_dir": "/home/raspberry/received_files"
+    },
+    {
+      "name": "zc3",
+      "ip": "192.168.1.103",
+      "user": "dev1",
+      "password": "raspberry",
+      "target_dir": "/home/dev1/received_files"
+    }
+  ],
+  "file_patterns": {
+    "zc1_": ["zc1"],
+    "zc2": ["zc2"],
+    "zc3_": ["zc3"],
+    "zc12_": ["zc1", "zc1"],
+    "zc13_": ["zc1", "zc3"],
+    "zc23_": ["zc2", "zc3"],    
+    "all_": "all"
+  },
+  "default_target": "all",
+  "server_port": 8000
+}
