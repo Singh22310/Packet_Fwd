@@ -7,7 +7,7 @@ from flask_cors import CORS
 import werkzeug.exceptions
 from dotenv import load_dotenv
 
-# import database
+import database
 
 load_dotenv()
 
@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 CORS(app)
-# database.init_db()
+database.init_db()
 
 @app.route('/update-checker/', methods=['GET'])
 def update_checker():
@@ -27,11 +27,45 @@ def update_checker():
     data = response.json()
     version_data = data["Update details"]
     logger.info(f"Version data: {version_data}")
-    return jsonify({"message": "Update details fetched successfully", "version": version_data}), 200
-    # if database.check_update(version_data["id"]):
-        # return jsonify({"message": "Update available", "version": version_data["id"]}), 200
-    # else:
-        # return jsonify({"message": "No update available", "version": version_data["id"]}), 200
+    # return jsonify({"message": "Update details fetched successfully", "version": version_data}), 200
+    if database.check_update(version_data["version"]):
+        return jsonify({"message": "No update available", "version": version_data["version"]}), 200
+    else:
+        return jsonify({"message": "Update available", "version": version_data["version"]}), 200
+
+@app.route('/download-update/')
+def download_update():
+    LOCAL_DOWNLOAD_PATH = os.path.join(os.path.dirname(__file__), 'update.zip')
+    try:
+        # Send GET request to Django to download file
+        response = requests.get('https://oemserverapp.onrender.com/fota/download/', stream=True)
+        response.raise_for_status()
+
+        # Extract filename from headers, if provided
+        content_disposition = response.headers.get('Content-Disposition')
+        if content_disposition and 'filename=' in content_disposition:
+            filename = content_disposition.split('filename=')[1].strip('";')
+        else:
+            filename = os.path.basename(LOCAL_DOWNLOAD_PATH)
+
+        full_path = os.path.join(os.path.dirname(LOCAL_DOWNLOAD_PATH), filename)
+
+        # Write the content to a local file
+        with open(full_path, 'wb') as f:
+            for chunk in response.iter_content(chunk_size=8192):
+                f.write(chunk)
+
+        return jsonify({
+            "status": "success",
+            "message": f"File downloaded and saved as {full_path}"
+        })
+
+    except requests.RequestException as e:
+        return jsonify({
+            "status": "error",
+            "message": f"Failed to download file: {e}"
+        }), 500    
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

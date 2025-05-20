@@ -1,9 +1,7 @@
 import os
 import logging
 import psycopg2
-from psycopg2 import pool
 from psycopg2.extras import DictCursor
-from psycopg2.binary import Binary
 import io
 from dotenv import load_dotenv 
 
@@ -39,7 +37,7 @@ def init_db():
         cursor = conn.cursor()
 
         cursor.execute('''
-            CREATE TABLE IF NOT EXISTS version_recieved (
+            CREATE TABLE IF NOT EXISTS versionDB_Test (
                 id SERIAL PRIMARY KEY,
                 version VARCHAR(255) NOT NULL,
                 file_name VARCHAR(255) NOT NULL,
@@ -70,7 +68,7 @@ def check_update(version):
         cursor = conn.cursor(cursor_factory=DictCursor)
 
         cursor.execute('''
-            SELECT * FROM version_recieved WHERE version = %s
+            SELECT * FROM versionDB_Test WHERE version = %s
         ''', (version,))
         result = cursor.fetchone()
 
