@@ -21,7 +21,7 @@ app = Flask(__name__)
 CORS(app)
 database.init_db()
 
-@app.route('/update-checker/', methods=['GET'])
+@app.route('/api/update-checker/', methods=['GET'])
 def update_checker():
     response = requests.get(os.getenv("CHECK_UPDATE_API"))
     data = response.json()
@@ -33,12 +33,12 @@ def update_checker():
     else:
         return jsonify({"message": "Update available", "version": version_data["version"]}), 200
 
-@app.route('/download-update/')
+@app.route('/api/download/')
 def download_update():
     LOCAL_DOWNLOAD_PATH = os.path.join(os.path.dirname(__file__), 'update.zip')
     try:
         # Send GET request to Django to download file
-        response = requests.get('https://oemserverapp.onrender.com/fota/download/', stream=True)
+        response = requests.get('http://127.0.0.1:4000/download', stream=True)
         response.raise_for_status()
 
         # Extract filename from headers, if provided
@@ -50,6 +50,17 @@ def download_update():
 
         full_path = os.path.join(os.path.dirname(LOCAL_DOWNLOAD_PATH), filename)
 
+        name = []
+        for char in filename:
+            if char == "_":
+                break
+            name.append(char)
+
+        fileName_str = ''.join(name)
+
+        print(f"File name: {fileName_str}")
+
+        
         # Write the content to a local file
         with open(full_path, 'wb') as f:
             for chunk in response.iter_content(chunk_size=8192):
@@ -65,7 +76,6 @@ def download_update():
             "status": "error",
             "message": f"Failed to download file: {e}"
         }), 500    
-
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
