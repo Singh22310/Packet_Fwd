@@ -2,6 +2,7 @@ import os
 import logging
 import atexit
 import requests
+import zipfile
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import werkzeug.exceptions
@@ -35,7 +36,7 @@ def update_checker():
 
 @app.route('/api/download/')
 def download_update():
-    LOCAL_DOWNLOAD_PATH = os.path.join(os.path.dirname(__file__), 'update.zip')
+    LOCAL_DOWNLOAD_PATH = os.getenv("DOWNLOAD_PATH")
     try:
         # Send GET request to Django to download file
         response = requests.get('http://127.0.0.1:4000/download', stream=True)
@@ -46,25 +47,28 @@ def download_update():
         if content_disposition and 'filename=' in content_disposition:
             filename = content_disposition.split('filename=')[1].strip('";')
         else:
-            filename = os.path.basename(LOCAL_DOWNLOAD_PATH)
+            filename = 'update.zip'
 
-        full_path = os.path.join(os.path.dirname(LOCAL_DOWNLOAD_PATH), filename)
+        full_path = os.path.join(LOCAL_DOWNLOAD_PATH, filename)
 
-        name = []
-        for char in filename:
-            if char == "_":
-                break
-            name.append(char)
+        # name = []
+        # for char in filename:
+        #     if char == "_":
+        #         break
+        #     name.append(char)
 
-        fileName_str = ''.join(name)
+        # fileName_str = ''.join(name)
 
-        print(f"File name: {fileName_str}")
+        # print(f"File name: {fileName_str}")
 
         
         # Write the content to a local file
         with open(full_path, 'wb') as f:
             for chunk in response.iter_content(chunk_size=8192):
                 f.write(chunk)
+
+        unzip_path = os.getenv("UNZIP_PATH")
+        unzip_file(full_path, unzip_path)
 
         return jsonify({
             "status": "success",
@@ -76,6 +80,14 @@ def download_update():
             "status": "error",
             "message": f"Failed to download file: {e}"
         }), 500    
+
+def unzip_file(zip_path, extract_to):
+    if not os.path.exists(extract_to):
+        os.makedirs(extract_to)
+
+    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+        zip_ref.extractall(extract_to)
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
