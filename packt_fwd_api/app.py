@@ -39,7 +39,7 @@ def download_update():
     LOCAL_DOWNLOAD_PATH = os.getenv("DOWNLOAD_PATH")
     try:
         # Send GET request to Django to download file
-        response = requests.get('http://127.0.0.1:4000/download', stream=True)
+        response = requests.get('http://192.168.2.124:4000/download', stream=True)
         response.raise_for_status()
 
         # Extract filename from headers, if provided
@@ -59,7 +59,8 @@ def download_update():
 
         # fileName_str = ''.join(name)
 
-        # print(f"File name: {fileName_str}")
+        fileName = filename[:-4]
+        print(f"File name: {fileName}")
 
         
         # Write the content to a local file
@@ -68,7 +69,7 @@ def download_update():
                 f.write(chunk)
 
         unzip_path = os.getenv("UNZIP_PATH")
-        unzip_file(full_path, unzip_path)
+        unzip_file(fileName, full_path, unzip_path)
 
         return jsonify({
             "status": "success",
@@ -81,7 +82,7 @@ def download_update():
             "message": f"Failed to download file: {e}"
         }), 500    
 
-def unzip_file(zip_path, extract_to):
+def unzip_file(filename, zip_path, extract_to):
     if not os.path.exists(extract_to):
         os.makedirs(extract_to)
 
