@@ -88,7 +88,8 @@ def unzip_file(zip_path, extract_to):
     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
         zip_ref.extractall(extract_to)
     
-    config_path = os.path.join(os.getenv("UNZIP_PATH"), "config.json")
+    unzipped_path = os.path.join(extract_to, filename)
+    config_path = os.path.join(unzipped_path, "config.json")
 
     if not os.path.isfile(config_path):
         raise FileNotFoundError(f"'config.json' not found in {extract_to}")
