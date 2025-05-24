@@ -81,6 +81,5 @@ def check_update(version):
 
     except Exception as e:
         logger.error(f"Error checking version in database: {e}")
-
-
+ 
 

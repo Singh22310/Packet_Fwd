@@ -3,11 +3,12 @@ import logging
 import atexit
 import requests
 import zipfile
+import json
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import werkzeug.exceptions
 from dotenv import load_dotenv
-
+import filehandler import FileHandler
 import database
 
 load_dotenv()
@@ -39,25 +40,19 @@ def download_update():
     LOCAL_DOWNLOAD_PATH = os.getenv("DOWNLOAD_PATH")
     try:
         # Send GET request to Django to download file
-        response = requests.get('http://192.168.2.124:4000/download', stream=True)
+        response = requests.get('http://192.168.2.166:4000/download', stream=True)
         response.raise_for_status()
 
         # Extract filename from headers, if provided
         content_disposition = response.headers.get('Content-Disposition')
         if content_disposition and 'filename=' in content_disposition:
             filename = content_disposition.split('filename=')[1].strip('";')
+            fileName = filename[:-4]
+            fh = FileHandler(fileName)
         else:
             filename = 'update.zip'
 
         full_path = os.path.join(LOCAL_DOWNLOAD_PATH, filename)
-
-        # name = []
-        # for char in filename:
-        #     if char == "_":
-        #         break
-        #     name.append(char)
-
-        # fileName_str = ''.join(name)
 
         fileName = filename[:-4]
         print(f"File name: {fileName}")
