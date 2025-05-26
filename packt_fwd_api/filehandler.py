@@ -43,7 +43,7 @@ class FileHandler:
     #Forawading file to specific zonal controller
     def file_forwader(self):
         print(self.config_data)
-        update = self.config["update_details"]
+        update = self.config_data["update_details"]
         ip = update["ip"]
         username = update["username"]
         password = update["password"]
