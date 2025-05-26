@@ -48,7 +48,7 @@ class FileHandler:
         username = update["username"]
         password = update["password"]
         target_dir = update["target_dir"]
-        local_path = os.path.join(os.getenv("UNZIP_PATH_DEBUG"), self.filename) # File stored in local machine
+        local_path = os.path.join(os.getenv("UNZIP_PATH"), self.filename) # File stored in local machine
         fileName = self.filename # Folder name
         
         try:

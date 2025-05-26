@@ -38,7 +38,7 @@ def update_checker():
 
 @app.route('/api/download/')
 def download_update():
-    LOCAL_DOWNLOAD_PATH = os.getenv("DOWNLOAD_PATH_DEBUG")
+    LOCAL_DOWNLOAD_PATH = os.getenv("DOWNLOAD_PATH")
     try:
         # Send GET request to Django to download file
         response = requests.get('http://192.168.2.166:4000/download', stream=True)
@@ -62,7 +62,7 @@ def download_update():
             for chunk in response.iter_content(chunk_size=8192):
                 f.write(chunk)
 
-        unzip_path = os.getenv("UNZIP_PATH_DEBUG")
+        unzip_path = os.getenv("UNZIP_PATH")
         
         if fh.unzip_file(fileName, full_path, unzip_path):
             print("Successfully unzipped the file.")
