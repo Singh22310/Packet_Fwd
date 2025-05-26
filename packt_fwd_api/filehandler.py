@@ -4,8 +4,6 @@ import zipfile
 import requests
 import paramiko
 from dotenv import load_dotenv
-from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
 
 # Load environment variables from .env file
 load_dotenv()
@@ -84,7 +82,7 @@ class FileHandler:
 
             sftp.close()
             ssh.close()
-            print(f"File {self.filename} forwarded to {ip}:{target_path}")
+            print(f"File {self.filename} forwarded to {ip}:{target_dir}")
         
         except Exception as e:
             print(f"Failed to forward file: {e}")
