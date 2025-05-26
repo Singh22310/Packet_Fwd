@@ -9,7 +9,7 @@ from flask_cors import CORS
 import werkzeug.exceptions
 from dotenv import load_dotenv
 import filehandler import FileHandler
-import database
+from database import DatabaseHandler 
 
 load_dotenv()
 
@@ -21,7 +21,8 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 CORS(app)
-database.init_db()
+db = DatabaseHandler()
+fh = FileHandler()
 
 @app.route('/api/update-checker/', methods=['GET'])
 def update_checker():
@@ -37,7 +38,7 @@ def update_checker():
 
 @app.route('/api/download/')
 def download_update():
-    LOCAL_DOWNLOAD_PATH = os.getenv("DOWNLOAD_PATH")
+    LOCAL_DOWNLOAD_PATH = os.getenv("DOWNLOAD_PATH_DEBUG")
     try:
         # Send GET request to Django to download file
         response = requests.get('http://192.168.2.166:4000/download', stream=True)
@@ -47,8 +48,6 @@ def download_update():
         content_disposition = response.headers.get('Content-Disposition')
         if content_disposition and 'filename=' in content_disposition:
             filename = content_disposition.split('filename=')[1].strip('";')
-            fileName = filename[:-4]
-            fh = FileHandler(fileName)
         else:
             filename = 'update.zip'
 
@@ -63,8 +62,10 @@ def download_update():
             for chunk in response.iter_content(chunk_size=8192):
                 f.write(chunk)
 
-        unzip_path = os.getenv("UNZIP_PATH")
-        unzip_file(fileName, full_path, unzip_path)
+        unzip_path = os.getenv("UNZIP_PATH_DEBUG")
+        
+        if fh.unzip_file(fileName, full_path, unzip_path):
+            fh.file_forwader()
 
         return jsonify({
             "status": "success",
@@ -77,23 +78,23 @@ def download_update():
             "message": f"Failed to download file: {e}"
         }), 500    
 
-def unzip_file(filename, zip_path, extract_to):
-    if not os.path.exists(extract_to):
-        os.makedirs(extract_to)
+# def unzip_file(filename, zip_path, extract_to):
+#     if not os.path.exists(extract_to):
+#         os.makedirs(extract_to)
 
-    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-        zip_ref.extractall(extract_to)
+#     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+#         zip_ref.extractall(extract_to)
     
-    unzipped_path = os.path.join(extract_to, filename)
-    config_path = os.path.join(unzipped_path, "config.json")
+#     unzipped_path = os.path.join(extract_to, filename)
+#     config_path = os.path.join(unzipped_path, "config.json")
 
-    if not os.path.isfile(config_path):
-        raise FileNotFoundError(f"'config.json' not found in {extract_to}")
+#     if not os.path.isfile(config_path):
+#         raise FileNotFoundError(f"'config.json' not found in {extract_to}")
 
-    with open(config_path, 'r') as f:
-        config_data = json.load(f)
+#     with open(config_path, 'r') as f:
+#         config_data = json.load(f)
 
-    print(config_data)
+#     print(config_data)
 
 
 if __name__ == '__main__':

@@ -14,72 +14,83 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Database credentials
-DB_HOST = os.getenv("DB_HOST")
-DB_PORT = os.getenv("DB_PORT")
-DB_NAME = os.getenv("DB_NAME")
-DB_USER = os.getenv("DB_USER")
-DB_PASSWORD = os.getenv("DB_PASSWORD")
+class DatabaseHandler:
+    def __init__(self):
+        # Database credentials
+        self.DB_HOST = os.getenv("DB_HOST")
+        self.DB_PORT = os.getenv("DB_PORT")
+        self.DB_NAME = os.getenv("DB_NAME")
+        self.DB_USER = os.getenv("DB_USER")
+        self.DB_PASSWORD = os.getenv("DB_PASSWORD")
 
-def init_db():
-    try:
-        # Connect to the PostgreSQL database
-        conn = psycopg2.connect(
-            host=DB_HOST,
-            port=DB_PORT,
-            dbname=DB_NAME,
-            user=DB_USER,
-            password=DB_PASSWORD
-        )
-        logger.info("Database connection established")
-
-        # Create a cursor object
-        cursor = conn.cursor()
-
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS versionDB_Test (
-                id SERIAL PRIMARY KEY,
-                version VARCHAR(255) NOT NULL,
-                file_name VARCHAR(255) NOT NULL,
-                update_type VARCHAR(255) NOT NULL,
-                time_stamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    def init_db(self):
+        try:
+            # Connect to the PostgreSQL database
+            self.conn = psycopg2.connect(
+                host=self.DB_HOST,
+                port=self.DB_PORT,
+                dbname=self.DB_NAME,
+                user=self.DB_USER,
+                password=self.DB_PASSWORD
             )
-        ''')
-        conn.commit()
-        logger.info("Table 'version_recieved' created or already exists")
-    
-    except Exception as e:
-        logger.error(f"Error initializing database: {e}")
-        raise
+            logger.info("Database connection established")
 
-def check_update(version):
-    try:
-        # Connect to the PostgreSQL database
-        conn = psycopg2.connect(
-            host=DB_HOST,
-            port=DB_PORT,
-            dbname=DB_NAME,
-            user=DB_USER,
-            password=DB_PASSWORD
-        )
-        logger.info("Database connection established")
+            # Create a cursor object
+            self.cursor = self.conn.cursor()
 
-        # Create a cursor object
-        cursor = conn.cursor(cursor_factory=DictCursor)
+            self.cursor.execute('''
+                CREATE TABLE IF NOT EXISTS versionDB_Test (
+                    id SERIAL PRIMARY KEY,
+                    version VARCHAR(255) NOT NULL,
+                    file_name VARCHAR(255) NOT NULL,
+                    update_type VARCHAR(255) NOT NULL,
+                    time_stamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            ''')
+            self.conn.commit()
+            logger.info("Table 'version_recieved' created or already exists")
+        
+        except Exception as e:
+            logger.error(f"Error initializing database: {e}")
+            raise
 
-        cursor.execute('''
-            SELECT * FROM versionDB_Test WHERE version = %s
-        ''', (version,))
-        result = cursor.fetchone()
+    def check_update(self, version):
+        try:
+            # Connect to the PostgreSQL database
+            if not hasattr(self, 'conn'):
+                self.init_db()
 
-        if result:
-            logger.info(f"Version {version} already exists in the database")
-            return True
-        else:
-            logger.info(f"Version {version} does not exist in the database... Update Available")
-            return False
+            self.cursor.execute('SELECT * FROM versionDB_Test WHERE version = %s', (version,))
+            result = self.cursor.fetchone()
+            
+            if result:
+                logger.info(f"Update available for version: {version}")
+                return False  # Update available
+            else:
+                logger.info(f"No update available for version: {version}")
+                return True  # No update available
+        
+        except Exception as e:
+            logger.error(f"Error checking update: {e}")
+            raise
 
-    except Exception as e:
-        logger.error(f"Error checking version in database: {e}")
- 
+    def put_update():
+        try:
+            if not hasattr(self, 'conn'):
+                self.init_db()
+            
+            self.cursor.execute('''
+                INSERT INTO versionDB_Test (version, file_name, update_type)
+                VALUES (%s, %s, %s)
+            ''', (version, file_name, update_type))
+            self.conn.commit()
+            logger.info(f"Update details inserted: {version}, {file_name}, {update_type}")
+        except Exception as e:
+            logger.error(f"Error inserting update details: {e}")
+            raise
 
+    def close_connection(self):
+        if hasattr(self, 'cursor'):
+            self.cursor.close()
+        if hasattr(self, 'conn'):
+            self.conn.close()
