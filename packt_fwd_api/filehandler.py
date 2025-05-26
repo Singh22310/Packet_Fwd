@@ -4,8 +4,8 @@ import zipfile
 import requests
 import paramiko
 from dotenv import load_dotenv
-from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
+# from watchdog.observers import Observers
+# from watchdog.events import FileSystemEventHandler
 
 # Load environment variables from .env file
 load_dotenv()
@@ -48,7 +48,7 @@ class FileHandler:
         username = update["username"]
         password = update["password"]
         target_dir = update["target_dir"]
-        local_path = os.path.join(os.getenv("UNZIP_PATH_DEBUG"), self.filename) # File stored in local machine
+        local_path = os.path.join(os.getenv("UNZIP_PATH"), self.filename) # File stored in local machine
         fileName = self.filename # Folder name
         
         try:
