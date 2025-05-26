@@ -65,7 +65,9 @@ def download_update():
         unzip_path = os.getenv("UNZIP_PATH_DEBUG")
         
         if fh.unzip_file(fileName, full_path, unzip_path):
-            fh.file_forwader()
+            print("Successfully unzipped the file.")
+            if fh.file_forwader():
+                print("File forwarded successfully.")
 
         return jsonify({
             "status": "success",
