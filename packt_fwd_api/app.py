@@ -8,7 +8,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 import werkzeug.exceptions
 from dotenv import load_dotenv
-import filehandler import FileHandler
+from filehandler import FileHandler
 from database import DatabaseHandler 
 
 load_dotenv()
