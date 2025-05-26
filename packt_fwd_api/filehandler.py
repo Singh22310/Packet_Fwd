@@ -41,7 +41,7 @@ class FileHandler:
             return False
     
     #Forawading file to specific zonal controller
-    def file_forwader():
+    def file_forwader(self):
         print(self.config_data)
         update = self.config["update_details"]
         ip = update["ip"]
