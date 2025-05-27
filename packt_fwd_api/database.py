@@ -73,7 +73,7 @@ class DatabaseHandler:
             logger.error(f"Error checking update: {e}")
             raise
 
-    def put_update(version, update_type):
+    def put_update(self, version, update_type):
         try:
             if not hasattr(self, 'conn'):
                 self.init_db()
