@@ -70,7 +70,7 @@ def download_update():
             status = fh.file_forwader()
             if status['status']:
                 print("File forwarded successfully.")
-                if db.put_update(status['version'], status['file_name'], status['update_type']):
+                if db.put_update(status['update_version'], status['file_name'], status['update_type']):
                     print("Update details saved to database.")
 
         return jsonify({
