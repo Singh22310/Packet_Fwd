@@ -48,7 +48,8 @@ class FileHandler:
         target_dir = update["target_dir"]
         local_path = os.path.join(os.getenv("UNZIP_PATH"), self.filename) # File stored in local machine
         fileName = self.filename # Folder name
-        
+        ver_details = self.config_data["update_details"]
+
         try:
             ssh = paramiko.SSHClient()
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -86,9 +87,11 @@ class FileHandler:
         
         except Exception as e:
             print(f"Failed to forward file: {e}")
-            return False
-        
-        return True
+            ver_details["status"] = False
+            return ver_details
+
+        ver_details["status"] = True
+        return ver_details
 
     
     

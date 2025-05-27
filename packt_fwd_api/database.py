@@ -74,7 +74,7 @@ class DatabaseHandler:
             logger.error(f"Error checking update: {e}")
             raise
 
-    def put_update():
+    def put_update(version, file_name, update_type):
         try:
             if not hasattr(self, 'conn'):
                 self.init_db()
@@ -85,9 +85,11 @@ class DatabaseHandler:
             ''', (version, file_name, update_type))
             self.conn.commit()
             logger.info(f"Update details inserted: {version}, {file_name}, {update_type}")
+            return True
+
         except Exception as e:
             logger.error(f"Error inserting update details: {e}")
-            raise
+            return False
 
     def close_connection(self):
         if hasattr(self, 'cursor'):
