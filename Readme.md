@@ -31,7 +31,7 @@ The system consists of three main components:
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd update-management-system
+   cd Packet_Fwd
    ```
 
 2. **Install dependencies**
