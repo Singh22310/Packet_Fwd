@@ -4,8 +4,7 @@ import zipfile
 import requests
 import paramiko
 from dotenv import load_dotenv
-# from watchdog.observers import Observers
-# from watchdog.events import FileSystemEventHandler
+
 
 # Load environment variables from .env file
 load_dotenv()
@@ -41,16 +40,17 @@ class FileHandler:
             return False
     
     #Forawading file to specific zonal controller
-    def file_forwader():
+    def file_forwader(self):
         print(self.config_data)
-        update = self.config["update_details"]
+        update = self.config_data["update_details"]
         ip = update["ip"]
         username = update["username"]
         password = update["password"]
         target_dir = update["target_dir"]
         local_path = os.path.join(os.getenv("UNZIP_PATH"), self.filename) # File stored in local machine
         fileName = self.filename # Folder name
-        
+        ver_details = self.config_data["update_details"]
+
         try:
             ssh = paramiko.SSHClient()
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -84,13 +84,18 @@ class FileHandler:
 
             sftp.close()
             ssh.close()
-            print(f"File {self.filename} forwarded to {ip}:{target_path}")
+            print(f"File {self.filename} forwarded to {ip}:{target_dir}")
         
         except Exception as e:
             print(f"Failed to forward file: {e}")
-            return False
-        
-        return True
+            ver_details["status"] = False
+            return ver_details
+
+        ver_details["status"] = True
+        return ver_details
+
+
+
 
     
     

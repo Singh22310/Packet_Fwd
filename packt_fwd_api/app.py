@@ -31,7 +31,7 @@ def update_checker():
     version_data = data["Update details"]
     logger.info(f"Version data: {version_data}")
     # return jsonify({"message": "Update details fetched successfully", "version": version_data}), 200
-    if database.check_update(version_data["version"]):
+    if db.check_update(version_data["version"]):
         return jsonify({"message": "No update available", "version": version_data["version"]}), 200
     else:
         return jsonify({"message": "Update available", "version": version_data["version"]}), 200
@@ -64,8 +64,9 @@ def download_update():
 
         unzip_path = os.getenv("UNZIP_PATH")
         
+        # Unzip the file and forwarding it to zonal controller
         if fh.unzip_file(fileName, full_path, unzip_path):
-            print("Unzipped successfully")
+
 
         return jsonify({
             "status": "success",
@@ -77,24 +78,6 @@ def download_update():
             "status": "error",
             "message": f"Failed to download file: {e}"
         }), 500    
-
-# def unzip_file(filename, zip_path, extract_to):
-#     if not os.path.exists(extract_to):
-#         os.makedirs(extract_to)
-
-#     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-#         zip_ref.extractall(extract_to)
-    
-#     unzipped_path = os.path.join(extract_to, filename)
-#     config_path = os.path.join(unzipped_path, "config.json")
-
-#     if not os.path.isfile(config_path):
-#         raise FileNotFoundError(f"'config.json' not found in {extract_to}")
-
-#     with open(config_path, 'r') as f:
-#         config_data = json.load(f)
-
-#     print(config_data)
 
 
 if __name__ == '__main__':

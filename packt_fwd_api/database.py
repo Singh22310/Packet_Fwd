@@ -42,7 +42,6 @@ class DatabaseHandler:
                 CREATE TABLE IF NOT EXISTS versionDB_Test (
                     id SERIAL PRIMARY KEY,
                     version VARCHAR(255) NOT NULL,
-                    file_name VARCHAR(255) NOT NULL,
                     update_type VARCHAR(255) NOT NULL,
                     time_stamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
@@ -74,20 +73,22 @@ class DatabaseHandler:
             logger.error(f"Error checking update: {e}")
             raise
 
-    def put_update():
+    def put_update(self, version, update_type):
         try:
             if not hasattr(self, 'conn'):
                 self.init_db()
             
             self.cursor.execute('''
-                INSERT INTO versionDB_Test (version, file_name, update_type)
-                VALUES (%s, %s, %s)
-            ''', (version, file_name, update_type))
+                INSERT INTO versionDB_Test (version, update_type)
+                VALUES (%s, %s)
+            ''', (version, update_type))
             self.conn.commit()
-            logger.info(f"Update details inserted: {version}, {file_name}, {update_type}")
+            logger.info(f"Update details inserted: {version}, {update_type}")
+            return True
+
         except Exception as e:
             logger.error(f"Error inserting update details: {e}")
-            raise
+            return False
 
     def close_connection(self):
         if hasattr(self, 'cursor'):
