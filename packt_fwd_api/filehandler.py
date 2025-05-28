@@ -13,6 +13,7 @@ class FileHandler:
     def __init__(self):
         self.config_data = None
         self.filename = None
+        self.key = None
 
     #Extracting zip file
     def unzip_file(self, filename, zip_path, extract_path): 
@@ -24,19 +25,20 @@ class FileHandler:
             zip_ref.extractall(extract_path)
         
         unzipped_path = os.path.join(extract_path, filename)
-        config_path = os.path.join(unzipped_path, "config.json")
+        # config_path = os.path.join(unzipped_path, "config.json")
+        key_path = os.path.join(unzipped_path, "key.txt")
 
         if not os.path.isfile(config_path):
-            raise FileNotFoundError(f"'config.json' not found in {extract_path}")
+            raise FileNotFoundError(f"'Key.txt' not found in {extract_path}")
 
-        with open(config_path, 'r') as f:
-            self.config_data = json.load(f)
+        with open(key_path, 'r') as f:
+            self.key = f.read() 
 
-        if self.config_data:
-            print(self.config_data)
+        if self.key:
+            print(self.key)
             return True
         else:
-            print("No config data found.")
+            print("Key not found.")
             return False
     
     #Forawading file to specific zonal controller
