@@ -24,12 +24,12 @@ class FileHandler:
         with zipfile.ZipFile(zip_path, 'r') as zip_ref:
             zip_ref.extractall(extract_path)
         
-        unzipped_path = os.path.join(extract_path, filename)
+        # unzipped_path = os.path.join(extract_path, filename)
         # config_path = os.path.join(unzipped_path, "config.json")
-        key_path = os.path.join(unzipped_path, "key.txt")
+        key_path = os.path.join(extract_path, "key.txt")
 
         if not os.path.isfile(key_path):
-            raise FileNotFoundError(f"'Key.txt' not found in {extract_path}")
+            raise FileNotFoundError(f"'key.txt' not found in {extract_path}")
 
         with open(key_path, 'r') as f:
             self.key = f.read() 
