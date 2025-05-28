@@ -28,7 +28,7 @@ class FileHandler:
         # config_path = os.path.join(unzipped_path, "config.json")
         key_path = os.path.join(unzipped_path, "key.txt")
 
-        if not os.path.isfile(config_path):
+        if not os.path.isfile(key_path):
             raise FileNotFoundError(f"'Key.txt' not found in {extract_path}")
 
         with open(key_path, 'r') as f:
