@@ -34,7 +34,8 @@ class FileHandler:
 
         else:
             print(f"Key file found at {key_path}")
-            return key_path, enc_file
+            status = True
+            return status, key_path, enc_file
 
         # with open(key_path, 'r') as f:
         #     self.key = f.read() 

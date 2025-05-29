@@ -67,7 +67,8 @@ def download_update():
         unzip_path = os.getenv("UNZIP_PATH")
         
         # Unzip the file and forwarding it to zonal controller
-        if key_path, enc_file = fh.unzip_file(filename, full_path, unzip_path):
+        status, key_path, enc_file = fh.unzip_file(filename, full_path, unzip_path)
+        if status:
             print("Successfully unzipped the file.")
             if fc.fileDecrypt(key_path, enc_file):
                 print("File decrypted successfully.")
