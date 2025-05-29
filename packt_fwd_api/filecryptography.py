@@ -14,8 +14,8 @@ class FileCryptography(FileHandler):
         if os.path.exists(os.getenv("PUBLIC_KEY_PATH")) and os.path.exists(os.getenv("PRIVATE_KEY_PATH")):
             self.keyGeneration()
         else:
-            self.private_key_file = os.getenv("PRIVATE_KEY_PATH", "private_key.pem")
-            self.public_key_file = os.getenv("PUBLIC_KEY_PATH", "public_key.pem")
+            self.private_key_file = os.getenv("PRIVATE_KEY_FILE")
+            self.public_key_file = os.getenv("PUBLIC_KEY_FILE")
             with open(self.private_key_file, 'rb') as f:
                 self.private_key = f.read()
 
@@ -23,13 +23,13 @@ class FileCryptography(FileHandler):
         privateFile = generate_private_key()
         publicFile = generate_public_key(privateFile)
         # Ensure the KEYS_PATH directory exists and moved the files
-        os.makedirs(os.getenv("KEYS_PATH"), exist_ok=True)
-        shutil.move(privateFile, os.path.join(target_dir, os.path.basename(privateFile)))
-        shutil.move(publicFile, os.path.join(target_dir, os.path.basename(publicFile)))
+        os.makedirs("keys/", exist_ok=True)
+        shutil.move(privateFile, os.path.join("keys/", os.path.basename(privateFile)))
+        shutil.move(publicFile, os.path.join("keys/", os.path.basename(publicFile)))
         
         #Load the files
-        self.private_key_file = os.path.join(os.getenv("KEYS_PATH"), "private_key.pem")
-        self.public_key_file = os.path.join(os.getenv("KEYS_PATH"), "public_key.pem")
+        self.private_key_file = os.getenv("PRIVATE_KEY_FILE")
+        self.public_key_file = os.getenv("PUBLIC_KEY_FILE")
         print(f"Private key saved to {self.private_key_file}")
         print(f"Public key saved to {self.public_key_file}")
         
