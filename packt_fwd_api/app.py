@@ -81,6 +81,7 @@ def download_update():
                 # Unzipping the decrypted file
                 if dzip_status:
                     print("Decrypted file unzipped successfully.")
+                    print(f"Decrypted file list: {dfilelist}")
                     data = fh.file_forwader(dfilelist)
                     if data:
                         print(f'File forwarded: {data}')
