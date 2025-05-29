@@ -67,13 +67,11 @@ def download_update():
         unzip_path = os.getenv("UNZIP_PATH")
         
         # Unzip the file and forwarding it to zonal controller
-        if fh.unzip_file(fileName, full_path, unzip_path):
+        if key_path, enc_file = fh.unzip_file(filename, full_path, unzip_path):
             print("Successfully unzipped the file.")
-            # status = fh.file_forwader()
-            # if status['status']:
-            #     print("File forwarded successfully.")
-            #     if db.put_update(status['update_version'], status['update_type']):
-            #         print("Update details saved to database.")
+            if fc.fileDecrypt(key_path, enc_file):
+                print("File decrypted successfully.")
+
 
         return jsonify({
             "status": "success",

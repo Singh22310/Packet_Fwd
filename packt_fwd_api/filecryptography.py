@@ -39,7 +39,7 @@ class FileCryptography(FileHandler):
             self.private_key = f.read()
         print("Keys generated successfully.")
         
-    def fileDecrypt(self, key_path, key_file, enc_file):
+    def fileDecrypt(self, key_path, enc_file):
         if self.private_key:
             receiver = FileReceiver(self.private_key)
             key = receiver.decrypt_key(key_path)
