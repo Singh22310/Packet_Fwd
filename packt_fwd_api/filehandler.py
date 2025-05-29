@@ -26,20 +26,25 @@ class FileHandler:
         
         # unzipped_path = os.path.join(extract_path, filename)
         # config_path = os.path.join(unzipped_path, "config.json")
-        key_path = os.path.join(extract_path, "key.txt")
+        enc_file = "encrypted_file.enc"
+        key_path = os.path.join(extract_path, "aes-key.enc")
 
         if not os.path.isfile(key_path):
             raise FileNotFoundError(f"'key.txt' not found in {extract_path}")
 
-        with open(key_path, 'r') as f:
-            self.key = f.read() 
-
-        if self.key:
-            print(self.key)
-            return True
         else:
-            print("Key not found.")
-            return False
+            print(f"Key file found at {key_path}")
+            return key_path, enc_file
+
+        # with open(key_path, 'r') as f:
+        #     self.key = f.read() 
+
+        # if self.key:
+        #     print(self.key)
+        #     return True
+        # else:
+        #     print("Key not found.")
+        #     return False
     
     #Forawading file to specific zonal controller
     def file_forwader(self):

@@ -12,29 +12,33 @@ class FileCryptography(FileHandler):
     def __init__(self):
         super().__init__(filename)
         if os.path.exists(os.getenv("PUBLIC_KEY_PATH")) and os.path.exists(os.getenv("PRIVATE_KEY_PATH")):
+            self.keyGeneration()
+        else:
             self.private_key_file = os.getenv("PRIVATE_KEY_PATH")
             self.public_key_file = os.getenv("PUBLIC_KEY_PATH")
             with open(self.private_key_file, 'rb') as f:
                 self.private_key = f.read()
-        else:
-            self.private_key_file = None
-            self.public_key_file = None
-            self.private_key = None
-    
+
     def keyGeneration(self):
-        if self.private_key_file and self.public_key_file:
-            print("Keys already exist.")
-            
-        else:
-            self.private_key_file = generate_private_key()
-            self.public_key_file = generate_public_key(self.private_key_file)
-            print(f"Private key saved to {self.private_key_file}")
-            print(f"Public key saved to {self.public_key_file}")
-            with open(self.private_key_file, 'rb') as f:
-                self.private_key = f.read()
-            print("Keys generated successfully.")
+        self.private_key_file = generate_private_key()
+        self.public_key_file = generate_public_key(self.private_key_file)
+        print(f"Private key saved to {self.private_key_file}")
+        print(f"Public key saved to {self.public_key_file}")
+        with open(self.private_key_file, 'rb') as f:
+            self.private_key = f.read()
+        print("Keys generated successfully.")
         
-    def fileDecrypt(self):
+    def fileDecrypt(self, key_path, key_file, enc_file):
         if self.private_key:
             receiver = FileReceiver(self.private_key)
-            
+            key = receiver.decrypt_key(key_path)
+            encryptFile = os.path.join(os.getenv("UNZIP_PATH"), enc_file)
+            decryptFile = os.path.join(os.getenv("UNZIP_PATH"), "updateFile.zip")
+            receiver.decrypt_file(encryptFile, key, decryptFile)
+            print(f"File decrypted successfully and saved to {decryptFile}")
+        
+        else:
+            print("Private key not found. Cannot decrypt the file.")
+            return False
+        
+        return True
