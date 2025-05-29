@@ -4,6 +4,7 @@ import atexit
 import requests
 import zipfile
 import json
+import shutil
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import werkzeug.exceptions
