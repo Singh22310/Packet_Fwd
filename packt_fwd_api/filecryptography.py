@@ -47,7 +47,8 @@ class FileCryptography(FileHandler):
                 else:
                     enc_file = f
             receiver = FileReceiver(self.private_key)
-            key = receiver.decrypt_key(os.getenv("UNZIP_PATH"), key_file)
+            key_path = os.path.join(os.getenv("UNZIP_PATH"), key_file)
+            key = receiver.decrypt_key(key_path)
             encryptFile = os.path.join(os.getenv("UNZIP_PATH"), enc_file)
             decryptFilename =  "updateFile.zip"
             decryptFilePath = os.path.join(os.getenv("UNZIP_PATH"), decryptFilename)
