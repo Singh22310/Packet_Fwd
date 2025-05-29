@@ -11,6 +11,7 @@ import werkzeug.exceptions
 from dotenv import load_dotenv
 from filehandler import FileHandler
 from database import DatabaseHandler 
+from filecryptography import FileCryptography
 
 load_dotenv()
 
