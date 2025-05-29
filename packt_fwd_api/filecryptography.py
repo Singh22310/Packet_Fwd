@@ -11,7 +11,7 @@ load_dotenv()
 class FileCryptography(FileHandler):
     def __init__(self):
         # super().__init__(filename)
-        if os.path.exists(os.getenv("PUBLIC_KEY_PATH")) and os.path.exists(os.getenv("PRIVATE_KEY_PATH")):
+        if os.path.exists(os.getenv("PRIVATE_KEY_FILE")) and os.path.exists(os.getenv("PUBLIC_KEY_FILE")):
             self.keyGeneration()
         else:
             self.private_key_file = os.getenv("PRIVATE_KEY_FILE")
