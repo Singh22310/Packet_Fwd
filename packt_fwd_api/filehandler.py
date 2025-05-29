@@ -37,12 +37,11 @@ class FileHandler:
     def file_forwader(self, fileList):
         config_file_path = None
         for f in fileList:
-            if os.path.isdir(f):
-                for root, dirs, files in os.walk(f):
-                    for name in files:
-                        if name.endswith('.json'):
-                            config_file_path = os.path.join(root, name)
-                            print(f"Config file found: {config_file_path}")
+            if f.endswith('.json'):
+                config_file_path = os.path.join(os.getenv("UNZIP_PATH"), f)
+                # self.filename = f
+                print(f"Config file found: {config_file_path}")
+                break
 
         
         if config_file_path:
