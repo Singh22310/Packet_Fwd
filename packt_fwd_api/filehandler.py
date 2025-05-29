@@ -42,6 +42,7 @@ class FileHandler:
                     for name in files:
                         if name.endswith('.json'):
                             config_file_path = os.path.join(root, name)
+                            print(f"Config file found: {config_file_path}")
 
         
         if config_file_path:
