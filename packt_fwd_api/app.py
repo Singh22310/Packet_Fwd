@@ -77,8 +77,7 @@ def download_update():
                 print("File decrypted successfully.")
                 
                 decryptFileName = decryptFilename[:-4]
-                dunzip_path = os.path.join(unzip_path, decryptFileName)
-                dzip_status, dfilelist = fh.unzip_file(decryptFileName, decryptFilePath, dunzip_path)
+                dzip_status, dfilelist = fh.unzip_file(decryptFileName, decryptFilePath, unzip_path)
                 # Unzipping the decrypted file
                 if dzip_status:
                     print("Decrypted file unzipped successfully.")

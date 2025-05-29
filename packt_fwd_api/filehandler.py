@@ -36,11 +36,14 @@ class FileHandler:
     #Forawading file to specific zonal controller
     def file_forwader(self, fileList):
         for f in fileList:
-            if f.endswith('.json'):
-                self.config_data = f 
-            else:
-                self.filename = f
-                
+            if os.path.isdir(f):
+                for root, dirs, files in os.walk(f):
+                    for name in files:
+                        if name.endswith('.json'):
+                            config_file = os.path.join(root, name)
+
+        self.config_data = json.load(config_file)
+        print(f"Config data loaded: {self.config_data}")
         update = self.config_data["update_details"]
         ip = update["ip"]
         username = update["username"]
