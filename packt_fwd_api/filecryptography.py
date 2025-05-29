@@ -12,12 +12,13 @@ class FileCryptography(FileHandler):
     def __init__(self):
         # super().__init__(filename)
         if os.path.exists(os.getenv("PRIVATE_KEY_FILE")) and os.path.exists(os.getenv("PUBLIC_KEY_FILE")):
-            self.keyGeneration()
-        else:
             self.private_key_file = os.getenv("PRIVATE_KEY_FILE")
             self.public_key_file = os.getenv("PUBLIC_KEY_FILE")
             with open(self.private_key_file, 'rb') as f:
                 self.private_key = f.read()
+        else:
+            self.keyGeneration()
+
 
     def keyGeneration(self):
         privateFile = generate_private_key()
