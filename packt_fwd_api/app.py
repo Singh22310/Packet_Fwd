@@ -23,6 +23,7 @@ app = Flask(__name__)
 CORS(app)
 db = DatabaseHandler()
 fh = FileHandler()
+fc = FileCryptography()
 
 @app.route('/api/update-checker/', methods=['GET'])
 def update_checker():
