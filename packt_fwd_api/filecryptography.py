@@ -1,6 +1,7 @@
 import os
 import json
 import zipfile
+import shutil
 from dotenv import load_dotenv
 from tihan.sdv.securetransfer.rsa_utils import generate_public_key, generate_private_key
 from tihan.sdv.securetransfer.file_transfer import FileReceiver 
