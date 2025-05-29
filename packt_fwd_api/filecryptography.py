@@ -39,17 +39,23 @@ class FileCryptography(FileHandler):
             self.private_key = f.read()
         print("Keys generated successfully.")
         
-    def fileDecrypt(self, key_path, enc_file):
+    def fileDecrypt(self, fileList):
         if self.private_key:
+            for f in fileList:
+                if f.endswith('.enc') and "key" in f:
+                    key_file = f
+                else:
+                    enc_file = f
             receiver = FileReceiver(self.private_key)
-            key = receiver.decrypt_key(key_path)
+            key = receiver.decrypt_key(os.getenv("UNZIP_PATH"), key_file)
             encryptFile = os.path.join(os.getenv("UNZIP_PATH"), enc_file)
-            decryptFile = os.path.join(os.getenv("UNZIP_PATH"), "updateFile.zip")
-            receiver.decrypt_file(encryptFile, key, decryptFile)
-            print(f"File decrypted successfully and saved to {decryptFile}")
-        
+            decryptFilename =  "updateFile.zip"
+            decryptFilePath = os.path.join(os.getenv("UNZIP_PATH"), decryptFilename)
+            receiver.decrypt_file(encryptFile, key, decryptFilePath)
+            print(f"File decrypted successfully and saved to {decryptFilePath}")
+            status = True
         else:
             print("Private key not found. Cannot decrypt the file.")
-            return False
+            return False, None
         
-        return True
+        return status, decryptFilePath, decryptFilename

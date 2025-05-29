@@ -67,12 +67,24 @@ def download_update():
         unzip_path = os.getenv("UNZIP_PATH")
         
         # Unzip the file and forwarding it to zonal controller
-        status, key_path, enc_file = fh.unzip_file(filename, full_path, unzip_path)
-        if status:
+        zip_status, filelist = fh.unzip_file(filename, full_path, unzip_path)
+        if zip_status and any(f.endswith('.enc') for f in filelist):
             print("Successfully unzipped the file.")
-            if fc.fileDecrypt(key_path, enc_file):
+            
+            # File Decryption
+            crypt_status, decryptFilePath, decryptFilename = fc.fileDecrypt(filelist)
+            if crypt_status:
                 print("File decrypted successfully.")
-
+                
+                decryptFileName = decryptFilename[:-4]
+                dunzip_path = os.path.join(unzip_path, decryptFileName)
+                dzip_status, dfilelist = fh.unzip_file(decryptFileName, decryptFilePath, dunzip_path)
+                # Unzipping the decrypted file
+                if dzip_status:
+                    print("Decrypted file unzipped successfully.")
+                    data = fh.file_forwader(dfilelist)
+                    if data:
+                        print(f'File forwarded: {data}')
 
         return jsonify({
             "status": "success",

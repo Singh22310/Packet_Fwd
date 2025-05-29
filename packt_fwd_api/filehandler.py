@@ -17,39 +17,30 @@ class FileHandler:
 
     #Extracting zip file
     def unzip_file(self, filename, zip_path, extract_path): 
-        self.filename = filename
+        # self.filename = filename
+        fileList = []
         if not os.path.exists(extract_path):
             os.makedirs(extract_path)
 
         with zipfile.ZipFile(zip_path, 'r') as zip_ref:
             zip_ref.extractall(extract_path)
+            fileList = zip_ref.namelist()
         
-        # unzipped_path = os.path.join(extract_path, filename)
-        # config_path = os.path.join(unzipped_path, "config.json")
-        enc_file = "encrypted_file.enc"
-        key_path = os.path.join(extract_path, "aes-key.enc")
+        # if not os.path.isfile(key_path):
+        #     raise FileNotFoundError(f"'key.txt' not found in {extract_path}")
 
-        if not os.path.isfile(key_path):
-            raise FileNotFoundError(f"'key.txt' not found in {extract_path}")
+        # print(f"Key file found at {key_path}")
+        status = True
+        return status, fileList
 
-        else:
-            print(f"Key file found at {key_path}")
-            status = True
-            return status, key_path, enc_file
-
-        # with open(key_path, 'r') as f:
-        #     self.key = f.read() 
-
-        # if self.key:
-        #     print(self.key)
-        #     return True
-        # else:
-        #     print("Key not found.")
-        #     return False
-    
     #Forawading file to specific zonal controller
-    def file_forwader(self):
-        print(self.config_data)
+    def file_forwader(self, fileList):
+        for f in fileList:
+            if f.endswith('.json'):
+                self.config_data = f 
+            else:
+                self.filename = f
+                
         update = self.config_data["update_details"]
         ip = update["ip"]
         username = update["username"]
